@@ -16,9 +16,19 @@ Dataset Source: Ontoum, S., Khemanantakul, T., Sroison, P., Triyason, T., & Wata
 [Link to Dataset](https://arxiv.org/abs/2206.01841)
 
 ### Dataset Statistics
-- Number of classes: [Add number]
-- Total images: [Add number]
-- Image dimensions: [Add dimensions]
+
+![Model Architecture](./images/ClassDistribution.png)
+- Number of classes: 4 (Dark, Green, Light, Medium)
+- Total images: 1,200 (300 images per class in training set)
+- Image dimensions: 50x50x3 (RGB)
+
+Distribution per class:
+- Dark Roast: 300 images
+- Green Beans: 300 images
+- Light Roast: 300 images
+- Medium Roast: 300 images
+
+The dataset is perfectly balanced with an equal number of images for each class, which is optimal for training the classification model.
 
 ## Project Structure
 
