@@ -74,7 +74,7 @@ The model showed consistent improvement during training:
 - Applied dropout (25%) and L2 regularization for better generalization
 
 ### Performance Visualization
-![Training History](./images/training_history.png)
+![Training History](./images/accuracy-and-loss-curves.png)
 *Training and validation metrics over epochs showing consistent improvement and good convergence*
 
 ### Class-wise Performance
@@ -102,7 +102,7 @@ The model showed robust performance across all roast levels:
 - Consistent performance with image augmentation
 
 ### Confusion Matrix
-![Confusion Matrix](./images/confusion_matrix.png)
+![Confusion Matrix](./images/cm_test.png)
 *Confusion matrix showing the distribution of predictions across classes*
 
 The model demonstrates strong commercial viability with its high accuracy and reliable performance across all coffee bean roast categories.
