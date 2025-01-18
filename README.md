@@ -28,8 +28,24 @@ Dataset Source: Ontoum, S., Khemanantakul, T., Sroison, P., Triyason, T., & Wata
 
 ## Model Architecture
 
-[Add brief description of your CNN architecture]
+![Model Architecture](./images/ModelArchitecture.png)
 
+The model uses a CNN architecture with:
+- 3 Convolutional layers with batch normalization
+- Max pooling layers
+- Dropout for regularization
+- Dense layers with L2 regularization
+- Softmax output layer for 4-class classification
+
+Architecture Details:
+1. Input Layer: 50x50x3 (RGB images)
+2. Conv2D Layer 1: 32 filters, 3x3 kernel, ReLU activation + BatchNorm + MaxPool
+3. Conv2D Layer 2: 64 filters, 3x3 kernel, ReLU activation + BatchNorm + MaxPool
+4. Conv2D Layer 3: 64 filters, 3x3 kernel, ReLU activation + BatchNorm + MaxPool
+5. Dropout Layer: 25% dropout rate
+6. Dense Layer 1: 128 units, ReLU activation + BatchNorm
+7. Dense Layer 2: 128 units, ReLU activation + BatchNorm
+8. Output Layer: 4 units (Softmax activation)
 ## Results
 
 [Add information about model performance, accuracy, and example predictions]
