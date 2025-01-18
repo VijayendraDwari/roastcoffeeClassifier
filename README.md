@@ -84,7 +84,7 @@ The dataset is perfectly balanced with an equal number of images for each class,
    - Softmax Activation
 
 ### Model Visualization
-![Model Architecture](./images/model_visualization.png)
+![Model Architecture](./images/ModelArchitecture.png)
 
 ### Key Features
 - **Regularization Techniques**:
