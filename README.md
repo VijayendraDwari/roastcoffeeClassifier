@@ -86,7 +86,7 @@ The model showed robust performance across all roast levels:
 - **Medium Roast**: 96.9% accuracy
 
 ### Example Predictions
-![Sample Predictions](./images/sample_predictions.png)
+![Sample Predictions](./images/pred-test.png)
 *Sample predictions showing correct classifications across different roast levels*
 
 ### Key Achievements
