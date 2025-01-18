@@ -38,24 +38,75 @@ The dataset is perfectly balanced with an equal number of images for each class,
 
 ## Model Architecture
 
-![Model Architecture](./images/ModelArchitecture.png)
+### Layer-by-Layer Description
 
-The model uses a CNN architecture with:
-- 3 Convolutional layers with batch normalization
-- Max pooling layers
-- Dropout for regularization
-- Dense layers with L2 regularization
-- Softmax output layer for 4-class classification
+1. **Input Layer**
+   - Shape: (50, 50, 3) - RGB images
+   - Normalization: Input pixels scaled to [0, 1]
 
-Architecture Details:
-1. Input Layer: 50x50x3 (RGB images)
-2. Conv2D Layer 1: 32 filters, 3x3 kernel, ReLU activation + BatchNorm + MaxPool
-3. Conv2D Layer 2: 64 filters, 3x3 kernel, ReLU activation + BatchNorm + MaxPool
-4. Conv2D Layer 3: 64 filters, 3x3 kernel, ReLU activation + BatchNorm + MaxPool
-5. Dropout Layer: 25% dropout rate
-6. Dense Layer 1: 128 units, ReLU activation + BatchNorm
-7. Dense Layer 2: 128 units, ReLU activation + BatchNorm
-8. Output Layer: 4 units (Softmax activation)
+2. **First Convolutional Block**
+   - Conv2D: 32 filters, 3×3 kernel
+   - Batch Normalization
+   - ReLU Activation
+   - Max Pooling: 2×2 pool size
+   - L2 Regularization: l2_strength
+
+3. **Second Convolutional Block**
+   - Conv2D: 64 filters, 3×3 kernel
+   - Batch Normalization
+   - ReLU Activation
+   - Max Pooling: 2×2 pool size
+   - L2 Regularization: l2_strength
+
+4. **Third Convolutional Block**
+   - Conv2D: 64 filters, 3×3 kernel
+   - Batch Normalization
+   - ReLU Activation
+   - Max Pooling: 2×2 pool size
+   - L2 Regularization: l2_strength
+   - Dropout: 25%
+
+5. **First Dense Block**
+   - Flatten Layer
+   - Dense: 128 units
+   - Batch Normalization
+   - ReLU Activation
+   - L2 Regularization: l2_strength
+
+6. **Second Dense Block**
+   - Dense: 128 units
+   - Batch Normalization
+   - ReLU Activation
+   - L2 Regularization: l2_strength
+
+7. **Output Layer**
+   - Dense: 4 units (one per class)
+   - Softmax Activation
+
+### Model Visualization
+![Model Architecture](./images/model_visualization.png)
+
+### Key Features
+- **Regularization Techniques**:
+  - L2 Regularization on all Conv2D and Dense layers
+  - Batch Normalization after each major layer
+  - 25% Dropout after convolutional layers
+  
+- **Activation Functions**:
+  - ReLU for intermediate layers
+  - Softmax for output layer
+
+- **Parameters**:
+  - Total params: [Add total params]
+  - Trainable params: [Add trainable params]
+  - Non-trainable params: [Add non-trainable params]
+
+### Design Choices
+- Progressive increase in filters (32 → 64 → 64)
+- Consistent 3×3 kernel size for all Conv2D layers
+- Multiple batch normalization layers for stable training
+- Dual 128-unit dense layers for feature extraction
+  
 ## Results
 
 ### Model Performance Metrics
