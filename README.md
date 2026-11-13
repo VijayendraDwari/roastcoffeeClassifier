@@ -1,179 +1,83 @@
-# Coffee Roast Classifier
+# Coffee Bean Roast Classifier
 
-![Python 3.x](https://img.shields.io/badge/python-3.x-blue.svg)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+An educational computer vision project by **Vijayendra Dwari**: classify coffee-bean photographs as **Dark, Green (unroasted), Light, or Medium** using a small CNN trained from scratch.
 
-This project classifies different types of coffee roasts using a Convolutional Neural Network (CNN) implemented in TensorFlow and Keras.
+## Project links
 
-## Overview
+| Resource | Purpose |
+| --- | --- |
+| [Medium article](https://medium.com/codex/learning-image-classification-with-cnn-using-tensorflow-4875fdd3ce62) | Original educational walkthrough (2023) |
+| [Kaggle notebook](https://www.kaggle.com/code/vijayendrad/coffee-bean-classification-99-cnn) | Historical hosted experiment |
+| [Kaggle dataset](https://www.kaggle.com/datasets/gpiosenka/coffee-bean-dataset-resized-224-x-224) | Resized dataset distribution |
+| [Coffee Roast Intelligence](https://arxiv.org/abs/2206.01841) | Source research by Ontoum et al. (2022) |
+| [Original notebook](training_notebook.ipynb) | Preserved repository experiment and outputs |
+| [Data audit](reports/data-audit.json) | Reproducible split manifest and duplicate exclusions |
+| [Method and limitations](docs/method.md) | Historical differences and evaluation boundaries |
 
-The Coffee Roast Classifier is designed to automatically identify different roast levels in coffee beans using deep learning. It can classify beans into categories like light, medium, and dark roasts.
+## Important evaluation finding
 
-## Dataset
+The repository contains **1,600 images**: 1,200 in `data/train` and 400 in `data/test`, with four equally represented labels. The new audit detects **402 training files matching test images** and **4 additional duplicate training files**, using decoded native-resolution RGB pixel hashes. Historical accuracy is therefore not evidence of performance on an independent test set.
 
-Dataset Source: Ontoum, S., Khemanantakul, T., Sroison, P., Triyason, T., & Watanapa, B. (2022). Coffee Roast Intelligence. arXiv preprint arXiv:2206.01841.
-[Link to Dataset](https://arxiv.org/abs/2206.01841)
+The default pipeline preserves the test set, excludes duplicate training copies, and creates a seeded, stratified validation split from the remaining unique training pool:
 
-### Dataset Statistics
+| Split | Images |
+| --- | ---: |
+| Training | 714 |
+| Validation | 80 |
+| Test | 400 |
 
-![Model Architecture](./images/ClassDistribution.png)
-- Number of classes: 4 (Dark, Green, Light, Medium)
-- Total images: 1,200 (300 images per class in training set)
-- Image dimensions: 50x50x3 (RGB)
+Source files are unchanged. Exact deduplication does not eliminate near-duplicate images or prove independence across photography sessions. No new benchmark accuracy is claimed yet.
 
-Distribution per class:
-- Dark Roast: 300 images
-- Green Beans: 300 images
-- Light Roast: 300 images
-- Medium Roast: 300 images
+## Quick start
 
-The dataset is perfectly balanced with an equal number of images for each class, which is optimal for training the classification model.
+Use Python 3.10–3.12 (the local smoke test used TensorFlow 2.16.2). From the repository root:
 
-## Project Structure
+```bash
+python -m venv .venv
+# Linux/macOS: source .venv/bin/activate
+# Windows: .venv\Scripts\activate
+python -m pip install -r requirements.txt
+python -m coffee_classifier audit
+python -m coffee_classifier train --output runs/baseline
+```
 
-- `data/`: Contains the dataset and preprocessing scripts
-- `images/`: Contains images for documentation and visualization
-- `training_notebook.ipynb`: Main notebook containing the model training code
+The included data is used by default. Pass `--data /path/to/data` for another directory containing `train/{Dark,Green,Light,Medium}` and `test/{Dark,Green,Light,Medium}`. Dataset licensing and attribution are separate from the repository's MIT code license; consult the upstream dataset terms before redistribution.
 
-## Model Architecture
+For a one-epoch installation check (not a benchmark):
 
-### Layer-by-Layer Description
+```bash
+python -m coffee_classifier train --epochs 1 --output runs/smoke
+```
 
-1. **Input Layer**
-   - Shape: (50, 50, 3) - RGB images
-   - Normalization: Input pixels scaled to [0, 1]
+Predict an image after training:
 
-2. **First Convolutional Block**
-   - Conv2D: 32 filters, 3×3 kernel
-   - Batch Normalization
-   - ReLU Activation
-   - Max Pooling: 2×2 pool size
-   - L2 Regularization: l2_strength
+```bash
+python -m coffee_classifier predict --run runs/baseline --image path/to/beans.jpg
+```
 
-3. **Second Convolutional Block**
-   - Conv2D: 64 filters, 3×3 kernel
-   - Batch Normalization
-   - ReLU Activation
-   - Max Pooling: 2×2 pool size
-   - L2 Regularization: l2_strength
+This prints a score for each class. Scores are not calibrated confidence or a detector for unrelated images.
 
-4. **Third Convolutional Block**
-   - Conv2D: 64 filters, 3×3 kernel
-   - Batch Normalization
-   - ReLU Activation
-   - Max Pooling: 2×2 pool size
-   - L2 Regularization: l2_strength
-   - Dropout: 25%
+## What a training run saves
 
-5. **First Dense Block**
-   - Flatten Layer
-   - Dense: 128 units
-   - Batch Normalization
-   - ReLU Activation
-   - L2 Regularization: l2_strength
+Every run gets a new output directory; existing runs cannot be overwritten. Artifacts include `best.keras`, resolved configuration and environment metadata, the exact image/split manifest, history, test classification report, confusion matrix, and per-image test probabilities. The best checkpoint is selected by validation loss; test images are evaluated after fitting.
 
-6. **Second Dense Block**
-   - Dense: 128 units
-   - Batch Normalization
-   - ReLU Activation
-   - L2 Regularization: l2_strength
+Inputs use a shared RGB conversion, bilinear resize to 50 × 50, and float32 normalization to [0, 1]. The network retains the original 32/64/64 convolution blocks and two 128-unit dense layers with batch normalization, L2 regularization, and dropout. Augmentation operates during training only. See [baseline configuration](configs/baseline.json).
 
-7. **Output Layer**
-   - Dense: 4 units (one per class)
-   - Softmax Activation
+## Repository guide
 
-### Model Visualization
-![Model Architecture](./images/ModelArchitecture.png)
+- `src/coffee_classifier/`: data audit, preprocessing, model, training and prediction commands.
+- `configs/`: experiment settings.
+- `reports/`: data provenance and validation notes.
+- `docs/`: methodology and historical dependency snapshot.
+- `tests/`: checks for duplicate handling, label conflicts, corrupt images and RGB semantics.
+- `training_notebook.ipynb`, `images/`: preserved historical notebook and figures.
+- `data/`: existing source images and metadata.
 
-### Key Features
-- **Regularization Techniques**:
-  - L2 Regularization on all Conv2D and Dense layers
-  - Batch Normalization after each major layer
-  - 25% Dropout after convolutional layers
-  
-- **Activation Functions**:
-  - ReLU for intermediate layers
-  - Softmax for output layer
+```bash
+python -m pip install -e '.[dev]'
+python -m pytest -q
+```
 
-- **Parameters**:
-  - Total params: [Add total params]
-  - Trainable params: [Add trainable params]
-  - Non-trainable params: [Add non-trainable params]
+## Next experiments
 
-### Design Choices
-- Progressive increase in filters (32 → 64 → 64)
-- Consistent 3×3 kernel size for all Conv2D layers
-- Multiple batch normalization layers for stable training
-- Dual 128-unit dense layers for feature extraction
-  
-## Results
-
-### Model Performance Metrics
-Our CNN model achieved excellent performance in classifying coffee bean roast levels:
-
-- **Final Training Accuracy**: 99.54%
-- **Final Validation Accuracy**: 96.67%
-- **Early Stopping**: Achieved at epoch 69
-- **Best Validation Loss**: 0.1558
-
-### Training History
-The model showed consistent improvement during training:
-- Initial learning rate: 0.0005
-- Implemented learning rate reduction on plateau
-- Used early stopping to prevent overfitting
-- Applied dropout (25%) and L2 regularization for better generalization
-
-### Performance Visualization
-![Training History](./images/accuracy-and-loss-curves.png)
-*Training and validation metrics over epochs showing consistent improvement and good convergence*
-
-### Class-wise Performance
-The model showed robust performance across all roast levels:
-
-- **Dark Roast**: 98.5% accuracy
-- **Green (Unroasted)**: 100% accuracy
-- **Light Roast**: 97.8% accuracy
-- **Medium Roast**: 96.9% accuracy
-
-### Example Predictions
-![Sample Predictions](./images/pred-test.png)
-*Sample predictions showing correct classifications across different roast levels*
-
-### Key Achievements
-1. **Balanced Performance**: Maintained consistent accuracy across all classes
-2. **Fast Convergence**: Achieved optimal performance within 70 epochs
-3. **Generalization**: Model shows robust performance on unseen data
-4. **Low False Positives**: Minimal confusion between adjacent roast levels
-
-### Model Robustness
-- Successfully handles varying lighting conditions
-- Effective with different bean orientations
-- Reliable across different bean sizes
-- Consistent performance with image augmentation
-
-### Confusion Matrix
-![Confusion Matrix](./images/cm_test.png)
-*Confusion matrix showing the distribution of predictions across classes*
-
-The model demonstrates strong commercial viability with its high accuracy and reliable performance across all coffee bean roast categories.
-
-## Usage
-
-### Requirements
-
-- Python 3.x
-- TensorFlow
-- Keras
-- OpenCV
-- NumPy
-- Matplotlib
-- Scikit-learn
-- Pandas
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/VijayendraDwari/roastcoffeeClassifier.git
-   cd roastcoffeeClassifier
+Run the full cleaned baseline, review errors and near-duplicates, repeat with multiple seeds, and evaluate on genuinely new photographs. A public demo should use a validated checkpoint and state these limitations. This is an educational classifier, not a validated commercial roast measurement system.
