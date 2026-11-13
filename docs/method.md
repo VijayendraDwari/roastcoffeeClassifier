@@ -1,0 +1,13 @@
+# Method and experiment lineage
+
+The Medium article, repository notebook and hosted Kaggle notebook are historical artifacts, not interchangeable benchmark runs. The original repository notebook uses Colab Drive paths, an unseeded Python shuffle before splitting, OpenCV image reads (normally BGR), and exception handlers that silently skip failed images. Its saved-model paths predate current `.keras` conventions. The original files remain unchanged for traceability.
+
+The new pipeline uses explicit RGB preprocessing shared by training and inference. It retains the notebook's CNN topology and nominal optimization settings, but changes the data split and augmentation implementation. Keras geometric augmentation replaces ImageDataGenerator; shear is not included. This is a corrected baseline, not an exact reproduction of historical scores.
+
+Deduplication processes sorted test paths first, then sorted training paths. The fingerprint includes image dimensions and decoded RGB pixels before resizing. Conflicting labels for the same image stop processing. Copies already seen are excluded; test images are preferentially retained. Remaining training images are shuffled separately by class with seed 42, with approximately 10% per class assigned to validation. All retained and excluded paths are recorded in the manifest. Corrupt files raise an error rather than disappearing silently.
+
+The bundled audit covers 1,600 images, retains 1,194 unique images, and excludes 406 training files. Of these, 402 match test images and four are additional duplicate copies in the training pool. The resulting 714/80/400 split contains no identical decoded RGB images across splits. It does not detect crops, recompression, similar camera frames, or shared acquisition sessions. Group-aware or external evaluation is still needed.
+
+Historical README metrics (99.54% training and 96.67% validation accuracy) are historical claims, not newly reproduced results. Per-class accuracy and commercial robustness claims have been removed from the main README because the repository did not establish their evaluation provenance. A one-epoch smoke test only checks execution and artifact integrity.
+
+Training fixes random seeds and requests deterministic TensorFlow operations. Exact numerical reproducibility across devices and library versions is not guaranteed. Each run records Python, TensorFlow, NumPy, configuration, class ordering, preprocessing and the data manifest. Test probabilities follow test-row order in that manifest. Keep the dataset snapshot and dependency environment with published experiments.
